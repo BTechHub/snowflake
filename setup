@@ -1,5 +1,6 @@
 1. Install snowsql https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/index.html
-2. Login via command promot as admin
+   Install latest version in your windows
+2. Login via command prompt as admin
 > snowsql -a AL83949.us-east-2.aws -u BTECHCLOUD
 3. CREATE FILE FORMAT
 > create or replace file format covid_csv_format
