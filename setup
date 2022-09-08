@@ -1,0 +1,4 @@
+1. Install snowsql
+2. Login via command promot as admin
+snowsql -a AL83949.us-east-2.aws -u BTECHCLOUD
+3. 
