@@ -1,0 +1,60 @@
+1. Install terraform
+2. Create ssh key to connect snowflake
+ Create ssh for local testing
+ LocalOrServerBash>  cd ~/.ssh
+ LocalOrServerBash> openssl genrsa 2048 | openssl pkcs8 -topk8 -inform PEM -out snowflake_terraform_snow_key.p8 -nocrypt
+ LocalOrServerBash> openssl rsa -in snowflake_terraform_snow_key.p8 -pubout -out snowflake_terraform_snow_key.pub
+3. COPY public ssh key value and create new user in snowflake
+  SNOWTERMINAL> CREATE USER "terraform-snow-connect" RSA_PUBLIC_KEY='MIL PUBLIC KEY YDAQAB' DEFAULT_ROLE=PUBLIC MUST_CHANGE_PASSWORD=FALSE;
+  Grant access for testing 
+  SNOWTERMINAL> GRANT ROLE SYSADMIN TO USER "terraform-snow-connect";
+  SNOWTERMINAL> GRANT ROLE SECURITYADMIN TO USER "terraform-snow-connect";
+  SNOWTERMINAL> GRANT ROLE ACCOUNTADMIN TO USER "terraform-snow-connect";
+4. Get snowflake account and region
+ SNOWTERMINAL> SELECT current_account() as SNOWFLAKE_ACCOUNT_LOCATOR, current_region() as SNOWFLAKE_REGION_ID;
+5.  Set env values in local/server
+   export SNOWFLAKE_USER="terraform-snow-connect"
+   export SNOWFLAKE_PRIVATE_KEY_PATH="~/.ssh/snowflake_terraform_snow_key.p8"  
+   export SNOWFLAKE_ACCOUNT="SNOWFLAKE_ACCOUNT_LOCATOR e.g A234234"
+   export SNOWFLAKE_REGION="AWS-US-EAST-2"
+   Note:  Region name should have hyphen symbol not underscore 
+6. Create terraform file to create warehouse and other functionality
+e.g.
+terraform {
+  required_providers {
+    snowflake = {
+      source  = "Snowflake-Labs/snowflake"
+      version = "~> 0.35"
+    }
+  }
+}
+
+provider "snowflake" {
+  role  = "ACCOUNTADMIN"
+}
+
+resource "snowflake_database" "db" {
+  name     = "TERRAFORM_HEALTH_DEMO"
+}
+
+resource "snowflake_warehouse" "warehouse" {
+  name           = "TERRAFORM_HEALTH_DEMO_WAREHOUSE"
+  warehouse_size = "X-small"
+
+  auto_suspend = 60
+}
+
+7. Initialize terraform in local/server/cicd pipeline
+  LocalOrServer> terraform init
+8. Terraform plan , This will check current and previous state to perform action
+  LocalOrServerBash>terraform plan
+9. Terraform apply
+ LocalOrServerBash>terraform apply
+and provide value as 'yes' to apply all changes 
+10.  verify changes in snowflake
+Note: If any error occures sometimes needs to 
+ terrarform init -upgrade
+ terraform plan 
+ terraform apply 
+
+  
