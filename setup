@@ -1,5 +1,5 @@
 1. Install snowsql https://sfc-repo.snowflakecomputing.com/snowsql/bootstrap/index.html
-   Install latest version in your windows
+   Install latest version in windows machine
 2. Login via command prompt as admin
 > snowsql -a AL83949.us-east-2.aws -u BTECHCLOUD
 3. CREATE FILE FORMAT
